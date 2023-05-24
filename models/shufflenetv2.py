@@ -152,6 +152,22 @@ configs = {
 }
 
 
+def ShuffleNetV2_0_5():
+    return ShuffleNetV2(0.5)
+
+
+def ShuffleNetV2_1():
+    return ShuffleNetV2(1)
+
+
+def ShuffleNetV2_1_5():
+    return ShuffleNetV2(1.5)
+
+
+def ShuffleNetV2_2():
+    return ShuffleNetV2(2)
+
+
 def test():
     net = ShuffleNetV2(net_size=0.5)
     x = torch.randn(3, 3, 32, 32)

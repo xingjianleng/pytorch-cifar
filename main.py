@@ -1,4 +1,7 @@
 '''Train CIFAR10 with PyTorch.'''
+import random
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -11,12 +14,21 @@ import torchvision.transforms as transforms
 import os
 import argparse
 
-from models import *
+import models
 from utils import progress_bar
+
+
+def get_model(model_name):
+    if not hasattr(models, model_name):
+        raise ValueError(f"{model_name} doesn't exist")
+    else:
+        return getattr(models, model_name)
 
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
+parser.add_argument('--model-name', required=True, type=str, help='model name')
+parser.add_argument('--seed', default=42, type=int, help='random seed')
 parser.add_argument('--resume', '-r', action='store_true',
                     help='resume from checkpoint')
 args = parser.parse_args()
@@ -25,18 +37,23 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
+random_seed = args.seed
+torch.manual_seed(random_seed)
+random.seed(random_seed)
+np.random.seed(random_seed)
+
 # Data
 print('==> Preparing data..')
 transform_train = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
 ])
 
 transform_test = transforms.Compose([
     transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
 ])
 
 trainset = torchvision.datasets.CIFAR10(
@@ -68,7 +85,7 @@ print('==> Building model..')
 # net = ShuffleNetV2(1)
 # net = EfficientNetB0()
 # net = RegNetX_200MF()
-net = SimpleDLA()
+net = get_model(args.model_name)()
 net = net.to(device)
 if device == 'cuda':
     net = torch.nn.DataParallel(net)
@@ -78,7 +95,7 @@ if args.resume:
     # Load checkpoint.
     print('==> Resuming from checkpoint..')
     assert os.path.isdir('checkpoint'), 'Error: no checkpoint directory found!'
-    checkpoint = torch.load('./checkpoint/ckpt.pth')
+    checkpoint = torch.load(f'./checkpoint/{args.model_name}_{args.seed}.pth')
     net.load_state_dict(checkpoint['net'])
     best_acc = checkpoint['acc']
     start_epoch = checkpoint['epoch']
@@ -144,7 +161,7 @@ def test(epoch):
         }
         if not os.path.isdir('checkpoint'):
             os.mkdir('checkpoint')
-        torch.save(state, './checkpoint/ckpt.pth')
+        torch.save(state, f'./checkpoint/{args.model_name}_{args.seed}.pth')
         best_acc = acc
 
 

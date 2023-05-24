@@ -1,0 +1,22 @@
+# IDE files
+.vscode/
+.idea/
+
+# MacOS files
+**/.DS_Store
+**/__MACOSX/
+
+# generated data files
+data/
+data_old/
+data_old_1/
+
+# jupyter notebook files
+working/
+
+# regnet model weights
+model_weights/
+checkpoint/
+
+# pycache
+**/__pycache__/
