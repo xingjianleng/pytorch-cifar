@@ -24,7 +24,7 @@ if __name__ == "__main__":
         ]
         processes = []
         for command in commands:
-            process = subprocess.subprocess.Popen(command, shell=True)
+            process = subprocess.Popen(command, shell=True)
             processes.append(process)
 
         for process in processes:
