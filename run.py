@@ -1,3 +1,4 @@
+import argparse
 import os
 import queue
 import subprocess
@@ -5,19 +6,24 @@ import time
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Auto trainer')
+    parser.add_argument('--seed', default=42, type=int,
+                        help='the random seed used to train the model')
+    args = parser.parse_args()
+
     all_models = [
         "DenseNet121", "DenseNet169", "DPN26", "DPN92",
         "EfficientNetB0", "GoogLeNet", "MobileNet", "MobileNetV2",
         "PNASNetA", "PNASNetB", "RegNetX_200MF", "RegNetX_400MF",
         "RegNetY_400MF", "ResNet18", "ResNet34", "ResNet50",
-        "ResNet101", "ResNeXt29_2x64d", "ResNeXt29_4x64d", "ResNeXt29_8x64d",
+        "ResNet101", "ResNeXt29_2x64d", "ResNeXt29_4x64d",
         "ResNeXt29_32x4d", "SENet18", "ShuffleNetG2", "ShuffleNetG3",
         "ShuffleNetV2_0_5", "ShuffleNetV2_1", "ShuffleNetV2_1_5", "ShuffleNetV2_2",
         "VGG11", "VGG13", "VGG16", "VGG19",
     ]
 
     processes = []
-    seed = 42
+    seed = args.seed
 
     # Assume we have 4 GPUs available, identified by IDs 0, 1, 2, and 3.
     gpu_queue = queue.Queue()
