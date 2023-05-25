@@ -20,6 +20,8 @@ if __name__ == "__main__":
         "ResNeXt29_32x4d", "SENet18", "ShuffleNetG2", "ShuffleNetG3",
         "ShuffleNetV2_0_5", "ShuffleNetV2_1", "ShuffleNetV2_1_5", "ShuffleNetV2_2",
         "VGG11", "VGG13", "VGG16", "VGG19",
+        "PreActResNet18", "PreActResNet34",
+        "PreActResNet50", "PreActResNet101"
     ]
 
     processes = []
